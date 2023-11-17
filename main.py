@@ -38,7 +38,7 @@ def get_env(path=".env"):
 config = get_env()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = config.get("DEFAULT", "SECRET_KEY")
+# app.config['SECRET_KEY'] = config.get("DEFAULT", "SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -61,8 +61,10 @@ def admin_only(f):
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = config.get(
-    "DEFAULT", "SQLALCHEMY_DATABASE_URI")
+# app.config['SQLALCHEMY_DATABASE_URI'] = config.get(
+#     "DEFAULT", "SQLALCHEMY_DATABASE_URI")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ("SQLALCHEMY_DATABASE_URI")
+app.config['SECRET_KEY'] = os.environ("SECRET_KEY")
 db = SQLAlchemy()
 db.init_app(app)
 
