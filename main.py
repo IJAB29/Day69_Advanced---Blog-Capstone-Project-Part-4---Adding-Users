@@ -11,6 +11,9 @@ from sqlalchemy.orm import relationship
 # Import your forms from the forms.py
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 
+from configparser import ConfigParser
+import os
+
 
 '''
 Make sure the required packages are installed: 
@@ -25,8 +28,17 @@ pip3 install -r requirements.txt
 This will install the packages from the requirements.txt for this project.
 '''
 
+
+def get_env(path=".env"):
+    config = ConfigParser()
+    config.read(path)
+    return config
+
+
+config = get_env()
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = config.get("DEFAULT", "SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -49,7 +61,8 @@ def admin_only(f):
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = config.get(
+    "DEFAULT", "SQLALCHEMY_DATABASE_URI")
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -266,6 +279,6 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    app.run(debug=False, port=5002)
     with app.app_context():
         db.create_all()
